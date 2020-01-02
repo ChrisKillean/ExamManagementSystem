@@ -1,0 +1,47 @@
+{%  extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Internal Review</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Internal Review
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container">
+        <div class="card bg-light">
+            <div class="card-header"><strong>Exam Setter Comments</strong></div>
+            <div class="card-body">
+                <p class="card-text">{{ initial_draft_ref.initial_draft_comments }}
+                    <br>
+                    <br>
+                    <a href="{{ initial_draft_ref.exam_paper.url }}" class="btn btn-primary" role="button">Exam Paper</a>
+                    <a href="{{ initial_draft_ref.marking_scheme.url }}" class="btn btn-primary" role="button">Marking Scheme</a>
+                </p>
+            </div>
+        </div>
+        <br>
+        <form  method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button  type="submit"  class="btn btn-success">Submit Feedback</button>
+        </form>
+    </div>
+    </body>
+
+{% endblock %}

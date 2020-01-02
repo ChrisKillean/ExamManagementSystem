@@ -1,0 +1,61 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>My Exams</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- My Exams
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    {% if request.user.user_role == 'EXAM_STAFF' %}
+        <a href="{% url 'exam_paper:create-exam' %}">Create Exam</a>
+    {% endif %}
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container-fluid">
+        <!-- Table for user teams details -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Paper Name</th>
+                    <th>Paper Academic Year</th>
+                    <th>Exam Setting Stage</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for u in user_exams %}
+                <tr>
+                    <td>
+                        <a href="{% url 'exam_paper:exam-paper-overview' exam_paper_ref=u.id %}">{{ u.module_exam }} -
+                        {% if u.main_exam %}
+                        Main Exam
+                        {% else %}
+                        Resit
+                        {% endif %}
+                        </a>
+                    </td>
+                    <td>{{ u.paper_review_deadlines.academic_start_year }}</td>
+                    <td>{{ u.get_paper_creation_stage_display }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+

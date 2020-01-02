@@ -1,0 +1,131 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <title>Exam Marker Report</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Exam Marker Report
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'exam_paper:exam-paper-overview' exam_paper_ref.id %}">Exam Paper Overview</a>
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'exam_paper:my-exam-papers' %}">My Exams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <!-- inks for tabs in review screen -->
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'exam_paper:review-transcript' exam_paper_ref.id %}">
+                            Paper Review
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'exam_paper:review-marker-report' exam_paper_ref.id %}">
+                            Markers Report
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        {% if paper_stage < 10 %}
+                            <a class="nav-link disabled" href="{% url 'exam_paper:review-moderator-report' exam_paper_ref.id %}">
+                        {% else %}
+                            <a class="nav-link" href="{% url 'exam_paper:review-moderator-report' exam_paper_ref.id %}">
+                        {% endif %}
+                            Moderator Report
+                            </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <!-- Details of exam setter report -->
+                <table class="table table-striped">
+                    <tr>
+                        <td><b>Module</b></td>
+                        <td>{{ exam_paper_ref.module_exam }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Report completed by</b></td>
+                        <td>{{ exam_setter }}</td>
+                    </tr>
+                </table>
+
+                <!-- contents of exam marker report -->
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>General Quality of candidate answers</strong>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{ exam_report.quality_answers }}
+                        </p>
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Areas of the course which the candidates answered well</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ exam_report.areas_answered_well }}
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Areas of the course which the candidates answered poorly</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ exam_report.areas_answered_poorly }}
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Difficulties arising from wording of the paper</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ exam_report.difficulties_wording_paper }}
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Difficulties applying the marking scheme</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ exam_report.difficulties_marking_scheme }}
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Candidates level of literacy and numeracy</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ exam_report.candidate_literacy_numeracy }}
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Other aspects to draw to the attention of the course coordinator</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ exam_report.additional_comments }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

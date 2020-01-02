@@ -1,0 +1,86 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Team {{ team_overview.team_name }}</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Team {{ team_overview.team_name }}
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'exam_paper:my-exam-papers' %}">My Exams</a>
+    {% if request.user.user_role == 'EXAM_STAFF' %}
+        <a href="{% url 'exam_paper:create-exam' %}">Create Exam</a>
+    {% endif %}
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container-fluid">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Exam Setter</th>
+                    <th>Internal Reviewer</th>
+                    <th>Vetting Committee</th>
+                    <th>External Reviewer</th>
+                    <th>School Office</th>
+                    <th>Observer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ team_overview.exam_setter }}</td>
+                    <td>{{ team_overview.internal_reviewer }}</td>
+                    <td>{{ team_overview.vetting_committee }}</td>
+                    <td>{{ team_overview.external_examiner }}</td>
+                    <td>{{ team_overview.school_office }}</td>
+                    <td>{{ team_overview.observer }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+     <div class="container-fluid">
+        <!-- Table for user teams details -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Paper Name</th>
+                    <th>Paper Academic Year</th>
+                    <th>Exam Setting Stage</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for t in team_exam_papers %}
+                <tr>
+                    <td>
+                        <a href="{% url 'exam_paper:exam-paper-overview' exam_paper_ref=t.id %}">{{ t.module_exam }} -
+                            {% if t.main_exam %}
+                                Main Exam
+                            {% else %}
+                                Resit
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>{{ t.paper_review_deadlines.academic_start_year }}</td>
+                    <td>{{ t.get_paper_creation_stage_display }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

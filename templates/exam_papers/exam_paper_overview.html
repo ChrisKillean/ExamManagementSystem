@@ -1,0 +1,246 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Exam Overview - {{ module_ref }}</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Exam Overview - {{ module_ref }}  -
+    {% if exam_paper_ref.main_exam %}
+        Main Exam
+    {% else %}
+        Resit
+    {% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'exam_paper:my-exam-papers' %}">My Exams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <br>
+
+    <!-- left side of page displaying tables with stage deadlines, submission and delegation. Rows are colour coordinated
+     based on the each stages adherence to their set deadlines -->
+    <div class="modal-body row">
+        <div class="col-7">
+            <table class="table table-active">
+                <thead>
+                    <tr>
+                        <th>Stage</th>
+                        <th>Submission Deadline</th>
+                        <th>Date Submitted</th>
+                        <th>Responsible</th>
+                    </tr>
+
+                </thead>
+                {% if p_initial == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_initial == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_initial == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>Initial Draft</b></td>
+                    <td>{{ deadlines_ref.initial_draft_submission }}</td>
+                    <td>{{ exam_paper_ref.submission_initial_draft }}</td>
+                    <td>{{ team_ref.exam_setter }}</td>
+                </tr>
+
+                {% if p_internal == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_internal == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_internal == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>Internal Review</b></td>
+                    <td>{{ deadlines_ref.internal_review_response }}</td>
+                    <td>{{ exam_paper_ref.submission_internal_review_response }}</td>
+                    <td>{{ team_ref.internal_reviewer }}</td>
+                </tr>
+
+                {% if p_internal_a == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_internal_a == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_internal_a == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>Amendments</b></td>
+                    <td>{{ deadlines_ref.internal_review_amendments }}</td>
+                    <td>{{ exam_paper_ref.submission_internal_review_amendments }}</td>
+                    <td>{{ team_ref.exam_setter }}</td>
+                </tr>
+
+                {% if p_vetting == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_vetting == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_vetting == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>Vetting Committee</b></td>
+                    <td>{{ deadlines_ref.vetting_committee_response }}</td>
+                    <td>{{ exam_paper_ref.submission_vetting_committee_response }}</td>
+                    <td>{{ team_ref.vetting_committee }}</td>
+                </tr>
+
+                {% if p_vetting_a == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_vetting_a == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_vetting_a == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>Amendments</b></td>
+                    <td>{{ deadlines_ref.vetting_committee_amendments }}</td>
+                    <td>{{ exam_paper_ref.submission_vetting_committee_amendments }}</td>
+                    <td>{{ team_ref.exam_setter }}</td>
+                </tr>
+
+                {% if p_external == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_external == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_external == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>External Examiner</b></td>
+                    <td>{{ deadlines_ref.external_review_response }}</td>
+                    <td>{{ exam_paper_ref.submission_external_review_response }}</td>
+                    <td>{{ team_ref.external_examiner }}</td>
+                </tr>
+
+                {% if p_school == 'on time' %}
+                    <tr class="table-success">
+                {% elif p_school == 'submitted late' %}
+                    <tr class="table-warning">
+                {% elif p_school == 'overdue' %}
+                    <tr class="table-danger">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+                    <td><b>School Office</b></td>
+                    <td>{{ deadlines_ref.school_office_submission }}</td>
+                    <td>{{ exam_paper_ref.submission_school_office }}</td>
+                    <td>{{ team_ref.exam_setter }}</td>
+                </tr>
+                {% if p_exam_report %}
+                    <tr class="table-success">
+                {% else %}
+                    <tr class="table-DAD3D3">
+                {% endif %}
+                    <td><b>Exam Marker Report</b></td>
+                    <td>No deadline</td>
+                    <td>{{ exam_paper_ref.submission_exam_marker_report }}</td>
+                    <td>{{ team_ref.exam_setter }}</td>
+                </tr>
+                {% if p_module_report %}
+                    <tr class="table-success">
+                {% else %}
+                    <tr class="table-DAD3D3">
+                {% endif %}
+                    <td><b>Module Moderator Report</b></td>
+                    <td>No deadline</td>
+                    <td>{{ exam_paper_ref.submission_moderator_report }}</td>
+                    <td>{{ team_ref.internal_reviewer }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- separator of other columns -->
+        <div class="col-1"></div>
+
+        <!-- right side of page, key for main table -->
+        <div class="col-4">
+            <table class="table table-active table-striped text-center">
+                <thead>
+                    <tr>
+                        <th class="text-xs-center">Table Key</th>
+                    </tr>
+                </thead>
+                <tr class="table-success">
+                    <td>Submitted on-time</td>
+                </tr>
+                <tr class="table-info">
+                    <td>Not submitted but is not past the deadline</td>
+                </tr>
+                <tr class="table-warning">
+                    <td>Submitted late</td>
+                </tr>
+                <tr class="table-danger">
+                    <td>Not submitted and past deadline</td>
+                </tr>
+                <tr class="table-DAD3D3">
+                    <td>Report has not been submitted</td>
+                </tr>
+            </table>
+            <br>
+
+            <!-- determines present stage and displays appropriate button -->
+            <p><strong>Currant Stage</strong>: {{ exam_paper_ref.get_paper_creation_stage_display }} </p>
+            {% if exam_paper_ref.get_paper_creation_stage_display == 'Initial Draft' and user == team_ref.exam_setter %}
+                <a href="{% url 'exam_paper:create-initial-draft' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'Internal Review' and user == team_ref.internal_reviewer %}
+                <a href="{% url 'exam_paper:create-internal-review' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'Internal Review Complete' and user == team_ref.exam_setter %}
+                <a href="{% url 'exam_paper:internal_review_amendments' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'Vetting Committee' and user == team_ref.vetting_committee %}
+                <a href="{% url 'exam_paper:vetting-committee-review' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'Vetting Committee Review Complete' and user == team_ref.exam_setter %}
+                <a href="{% url 'exam_paper:vetting-committee-amendments' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'External Review' and user == team_ref.external_examiner %}
+                <a href="{% url 'exam_paper:create-external-review' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'External Review Complete' and user == team_ref.exam_setter %}
+                <a href="{% url 'exam_paper:external-review-amendments' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'Paper Finalised' and user == team_ref.exam_setter %}
+                <a href="{% url 'exam_paper:exam-marker-report' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+
+            {% elif exam_paper_ref.get_paper_creation_stage_display == 'Exam Marker Report Submitted' and user == team_ref.internal_reviewer %}
+                <a href="{% url 'exam_paper:module-moderator-report' exam_paper_ref.id %}" class="btn btn-primary" role="button">Go To Task</a>
+            {% endif %}
+
+        <br><br>
+
+        <!-- display link to paper transcripts -->
+        {% if exam_paper_ref.paper_creation_stage_display != 'Initial Draft' %}
+            <a href="{% url 'exam_paper:review-transcript' exam_paper_ref.id %}" class="btn btn-primary" role="button">View Transcript</a>
+        {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+</body>

@@ -1,0 +1,37 @@
+{%  extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Create - Module Moderator Report</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Create Module Moderator Report
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+{% endblock %}
+
+{% block body %}
+    <br>
+    <!-- Exam Maker Report form -->
+    <div class="container d-flex h-100">
+        <div class="row justify-content-center">
+            <form  method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button  type="submit"  class="btn btn-success">Submit Report</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

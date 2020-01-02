@@ -1,0 +1,104 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <title>Module Moderator Report</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Module Moderator Report
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'exam_paper:exam-paper-overview' exam_paper_ref.id %}">Exam Paper Overview</a>
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'exam_paper:my-exam-papers' %}">My Exams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <!-- Details of the module moderator report -->
+        <div class="card">
+            <!-- Links to other review docs -->
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'exam_paper:review-transcript' exam_paper_ref.id %}">
+                            Paper Review
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'exam_paper:review-marker-report' exam_paper_ref.id %}">
+                            Markers Report
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'exam_paper:review-moderator-report' exam_paper_ref.id %}">
+                            Moderator Report
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped">
+                    <tr>
+                        <td><b>Module</b></td>
+                        <td>{{ exam_paper_ref.module_exam }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Module Coordinator</b></td>
+                        <td>{{ module_coordinator }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Moderator</b></td>
+                        <td>{{ moderator }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Type of exam</b></td>
+                        <td>{{ exam_paper_ref.exam_paper_type }}</td>
+                    </tr>
+                </table>
+                <br>
+
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Checking Addition and total marks</strong>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{ moderator_report.check_addition_and_total_marks }}
+                        </p>
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>The moderation process</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ moderator_report.moderation_process }}
+                    </div>
+                </div>
+                <div class="card bg-light">
+                    <div class="card-header">
+                        <strong>Significant outcomes</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ moderator_report.significant_outcomes }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}

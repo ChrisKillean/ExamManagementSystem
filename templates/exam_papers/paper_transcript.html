@@ -1,0 +1,175 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Exam Paper Transcript</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Exam Paper Transcript
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'exam_paper:exam-paper-overview' exam_paper_ref.id %}">Exam Paper Overview</a>
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    <a href="{% url 'exam_paper:my-exam-papers' %}">My Exams</a>
+    <a href="{% url 'details:guideline-documents' %}">Guideline Documents</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {% if paper_stage >= 1 %}
+            <div class="card">
+                <div class="card-header">
+                    <!-- Links to other stages of review -->
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'exam_paper:review-transcript' exam_paper_ref.id %}">
+                                Paper Review
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% if paper_stage < 9 %}
+                                <a class="nav-link disabled" href="{% url 'exam_paper:review-marker-report' exam_paper_ref.id %}">
+                            {% else %}
+                                <a class="nav-link" href="{% url 'exam_paper:review-marker-report' exam_paper_ref.id %}">
+                            {% endif %}
+                                Markers Report
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% if paper_stage < 10 %}
+                                <a class="nav-link disabled" href="{% url 'exam_paper:review-moderator-report' exam_paper_ref.id %}">
+                            {% else %}
+                                <a class="nav-link" href="{% url 'exam_paper:review-moderator-report' exam_paper_ref.id %}">
+                            {% endif %}
+                                Moderator Report
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <!-- table for details of exam paper and names of role participants -->
+                    <table class="table table-striped">
+                        <tr>
+                            <td><b>Module</b></td>
+                            <td>{{ exam_paper_ref.module_exam }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exam Setter</b></td>
+                            <td>{{ team_ref.exam_setter.users_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Internal Reviewer</b></td>
+                            <td>{{ team_ref.internal_reviewer.users_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Vetting Committee</b></td>
+                            <td>{{ team_ref.vetting_committee.users_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>External Examiner</b></td>
+                            <td>{{ team_ref.external_examiner.users_name }}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Contents of the transcript -->
+                    <div class="card bg-light">
+                        <div class="card-header"><h5>Initial Draft</h5></div>
+                        <div class="card-body">
+                            <p class="card-text"><b>Exam Setter Comments</b>
+                                <br>
+                                {{ initial_draft.initial_draft_comments }}
+                                <br>
+                                <br>
+                                <a href="{{ initial_draft.exam_paper.url }}" class="btn btn-primary">
+                                    Exam Paper
+                                </a>
+                                <a href="{{ initial_draft.marking_scheme.url }}" class="btn btn-primary">
+                                    Marking Scheme
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    {% if paper_stage > 2 %}
+                    <div class="card bg-light">
+                        <div class="card-header"><h5>Internal Review</h5></div>
+                        <div class="card-body">
+                            <p class="card-text"><b>Reviewer Feedback</b>
+                                <br>
+                                {{ internal_review.internal_reviewer_feedback }}
+                                {% if paper_stage > 3 %}
+                                <br><br>
+                                <b>Exam Setter Response</b>
+                                <br>
+                                {{ internal_review.exam_setter_response }}
+                                <br>
+                                <br>
+                                <a href="{{ internal_review.exam_paper.url }}" class="btn btn-primary">
+                                    Exam Paper
+                                </a>
+                                <a href="{{ internal_review.marking_scheme.url }}" class="btn btn-primary">
+                                    Marking Scheme
+                                </a>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if paper_stage > 4 %}
+                    <div class="card bg-light">
+                        <div class="card-header"><h5>Vetting Committee</h5></div>
+                        <div class="card-body">
+                            <p class="card-text"><b>Committee Feedback</b>
+                                <br>
+                                {{ vetting.vetting_committee_feedback }}
+                                {% if paper_stage > 5 %}
+                                <br><br>
+                                <b>Exam Setter Response</b>
+                                <br>
+                                {{ vetting.exam_setter_response }}
+                                <br><br>
+                                    <a href="{{ vetting.exam_paper.url }}" class="btn btn-primary">Exam Paper</a>
+                                    <a href="{{ vetting.marking_scheme.url }}" class="btn btn-primary">Marking Scheme</a>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if paper_stage > 6 %}
+                    <div class="card bg-light">
+                        <div class="card-header"><strong>External Review</strong></div>
+                        <div class="card-body">
+                            <p class="card-text"><b>Reviewer Feedback</b>
+                                <br>
+                                {{ external_review.external_examiner_feedback }}
+                                {% if paper_stage > 7 %}
+                                <br><br>
+                                <b>Exam Setter Response</b>
+                                <br>
+                                {{ external_review.exam_setter_response }}
+                                <br>
+                                    <a href="{{ external_review.exam_paper.url }}" class="btn btn-primary">Exam Paper</a>
+                                    <a href="{{ external_review.marking_scheme.url }}" class="btn btn-primary">Marking Scheme</a>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+{% endblock %}
+

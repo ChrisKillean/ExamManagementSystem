@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Login</title>
+    {% endblock %}
+</head>
+
+<body>
+
+{% block header_page_info %}
+- Login Page
+{% endblock %}
+
+{% block header_signed_in_users %}
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:password_reset' %}"> Forgot your password? <strong>Reset here</strong></a>
+
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container-fluid">
+        <h2>Login</h2>
+        <form method="post">
+           <!-- Cross site request forgery token - helps protect login system -->
+            {% csrf_token %}
+            <!-- form as paragraph -->
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+    </div>
+{% endblock %}

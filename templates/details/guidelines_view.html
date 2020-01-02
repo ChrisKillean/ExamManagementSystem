@@ -1,0 +1,55 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Guideline Documents</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Guideline Documents
+{% endblock %}
+
+{% block navbar %}
+    <!-- Nav links populated based on type of user logged in -->
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <!-- upload documents show only for Examination Officer -->
+    {% if request.user.is_superuser %}
+        <a href="{% url 'details:upload-guidelines' %}">Upload Guideline Document</a>
+    {% endif %}
+    {% if request.user.user_role == 'EXAM_STAFF' %}
+        <a href="{% url 'exam_paper:create-exam' %}">Create Exam</a>
+    {% endif %}
+    <a href="{% url 'teams:my-teams' %}">My Teams</a>
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container-fluid">
+        <!-- Table for user teams details -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Document</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for g in guidelines %}
+                <tr>
+                    <td>
+                        <a href="{{ g.document.url }}"> {{ g.name }} </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+

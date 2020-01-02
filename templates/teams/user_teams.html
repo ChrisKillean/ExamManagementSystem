@@ -1,0 +1,61 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>My Teams</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- My Teams
+{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'accounts:account_home' %}">Home</a>
+    <a href="{% url 'exam_paper:my-exam-papers' %}">My Exams</a>
+    {% if request.user.user_role == 'EXAM_STAFF' %}
+        <a href="{% url 'exam_paper:create-exam' %}">Create Exam</a>
+    {% endif %}
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="container-fluid">
+        <!-- Table for user teams details -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Team Name</th>
+                    <th>Exam Setter</th>
+                    <th>Internal Reviewer</th>
+                    <th>Vetting Committee</th>
+                    <th>External Reviewer</th>
+                    <th>School Office</th>
+                    <th>Observer</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- contents of table -->
+            {% for t in user_teams %}
+                <tr>
+                    <td> <a href=" {% url 'teams:team-page' t.id %}"> {{ t.team_name }} </a></td>
+                    <td>{{ t.exam_setter.users_name }}</td>
+                    <td>{{ t.internal_reviewer.users_name }}</td>
+                    <td>{{ t.vetting_committee.users_name }}</td>
+                    <td>{{ t.external_examiner.users_name }}</td>
+                    <td>{{ t.school_office.users_name }}</td>
+                    <td>{{ t.observer.users_name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

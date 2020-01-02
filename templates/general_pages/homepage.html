@@ -1,0 +1,40 @@
+{%  extends 'base.html' %}
+
+<head>
+    {% block head %}
+        <!-- Set page title to login -->
+        <title>Homepage</title>
+    {% endblock %}
+</head>
+
+<body>
+{% block header_page_info %}
+- Homepage
+{% endblock %}
+
+{% block navbar %}
+    <!-- Display nav bar with logout. Admin link added for Examination Officers -->
+    {% if request.user.is_superuser %}
+        <a class="ml-auto" href="{% url 'admin:index' %}">Admin Site</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+    {% else %}
+        <a class="ml-auto" href="{% url 'accounts:logout' %}">Logout</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <br>
+    <!-- links to various parts of system displayed based on type of user logged in -->
+    <div class="btn-group-vertical d-flex mx-2" role="group">
+        <a href="{% url 'teams:my-teams' %}" class="btn btn-primary btn-lg btn-block">My Teams</a><br>
+        <a href="{% url 'exam_paper:my-exam-papers' %}" class="btn btn-primary btn-lg btn-block">My Exams</a><br>
+        <a href="{% url 'details:guideline-documents' %}" class="btn btn-primary btn-lg btn-block">Guideline Documents</a><br>
+        {% if request.user.user_role == 'EXAM_STAFF' %}
+            <a href="{% url 'exam_paper:create-exam' %}" class="btn btn-primary btn-lg btn-block">Create Exam</a><br>
+        {% endif %}
+        {% if request.user.is_superuser %}
+            <a href="{% url 'exam_paper:exam-officer-papers' %}" class="btn btn-primary btn-lg btn-block">View All Exams</a>
+        {% endif %}
+    </div>
+
+{% endblock %}
